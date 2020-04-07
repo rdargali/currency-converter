@@ -72,7 +72,7 @@ const App = () => {
         amount={toAmount}
         onChangeAmount={handleOnChangeAmountTo}
       />
-      <div className="last-update">Rates accurate as of {lastUpdated}</div>
+      <div className="last-updated">Rates accurate as of {lastUpdated}</div>
     </div>
   );
 };
