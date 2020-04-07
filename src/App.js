@@ -1,10 +1,14 @@
 import React from "react";
+import Currency from "./components/Currency";
 import "./App.css";
 
 function App() {
   return (
     <div className="App">
-      <h1>Hello</h1>
+      <h1>Convert</h1>
+      <Currency />
+      <div>=</div>
+      <Currency />
     </div>
   );
 }
