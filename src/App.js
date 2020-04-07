@@ -8,22 +8,60 @@ const URL = "https://api.exchangeratesapi.io/latest";
 
 const App = () => {
   const [currencies, setCurrencies] = useState([]);
-  // console.log(currencies);
+  const [from, setFrom] = useState();
+  const [to, setTo] = useState();
+  const [exchangeRate, setExchangeRate] = useState();
+  const [amount, setAmount] = useState(1);
+  const [fromAmountCheck, setFromAmountCheck] = useState(true);
+
+  let toAmount, fromAmount;
+
+  if (fromAmountCheck) {
+    fromAmount = amount;
+    toAmount = exchangeRate * amount;
+  } else {
+    toAmount = amount;
+    fromAmount = amount / exchangeRate;
+  }
 
   useEffect(() => {
-    axios
-      .get(URL)
-      .then((response) =>
-        setCurrencies([response.data.base, ...Object.keys(response.data.rates)])
-      );
+    axios.get(URL).then((response) => {
+      const firstCurrency = Object.keys(response.data.rates)[0];
+      setCurrencies([response.data.base, ...Object.keys(response.data.rates)]);
+      setFrom(response.data.base);
+      setTo(firstCurrency);
+      setExchangeRate(response.data.rates[firstCurrency]);
+    });
   }, []);
+
+  const handleOnChangeAmountFrom = (e) => {
+    setAmount(e.target.value);
+    setFromAmountCheck(true);
+  };
+
+  const handleOnChangeAmountTo = (e) => {
+    setAmount(e.target.value);
+    setFromAmountCheck(false);
+  };
 
   return (
     <div className="App">
       <h1>Convert</h1>
-      <Currency currencies={currencies} />
+      <Currency
+        currencies={currencies}
+        selectedCurrency={from}
+        onChangeCurrency={(e) => setFrom(e.target.value)}
+        amount={fromAmount}
+        onChangeAmount={handleOnChangeAmountFrom}
+      />
       <div className="equals">=</div>
-      <Currency currencies={currencies} />
+      <Currency
+        currencies={currencies}
+        selectedCurrency={to}
+        onChangeCurrency={(e) => setTo(e.target.value)}
+        amount={toAmount}
+        onChangeAmount={handleOnChangeAmountTo}
+      />
     </div>
   );
 };
