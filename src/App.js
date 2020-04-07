@@ -13,6 +13,7 @@ const App = () => {
   const [exchangeRate, setExchangeRate] = useState();
   const [amount, setAmount] = useState(1);
   const [fromAmountCheck, setFromAmountCheck] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState("");
 
   let toAmount, fromAmount;
 
@@ -31,8 +32,17 @@ const App = () => {
       setFrom(response.data.base);
       setTo(firstCurrency);
       setExchangeRate(response.data.rates[firstCurrency]);
+      setLastUpdated(response.data.date);
     });
   }, []);
+
+  useEffect(() => {
+    if (from != null && to != null) {
+      axios
+        .get(`${URL}?base=${from}&symbols=${to}`)
+        .then((response) => setExchangeRate(response.data.rates[to]));
+    }
+  }, [from, to]);
 
   const handleOnChangeAmountFrom = (e) => {
     setAmount(e.target.value);
@@ -62,6 +72,7 @@ const App = () => {
         amount={toAmount}
         onChangeAmount={handleOnChangeAmountTo}
       />
+      <div className="last-update">Rates accurate as of {lastUpdated}</div>
     </div>
   );
 };
